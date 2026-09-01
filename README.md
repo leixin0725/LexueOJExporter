@@ -727,7 +727,7 @@ WIRIS 公式识别
 
 # License
 
-如果你准备将本项目作为开源项目发布，可以使用 MIT License。
+MIT
 
 ---
 
