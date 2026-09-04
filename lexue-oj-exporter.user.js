@@ -21,6 +21,30 @@
       .trim();
   }
 
+  function preserveHtmlText(element) {
+    if (!element) {
+      return '';
+    }
+
+    let html = element.innerHTML;
+
+    // 保留换行
+    html = html.replace(/<br\s*\/?>/gi, '\n');
+
+    // 保留 HTML 空格
+    html = html.replace(/&nbsp;/gi, ' ');
+
+    // 去除标签
+    html = html.replace(/<[^>]*>/g, '');
+
+    // 解码剩余实体
+    const textarea = document.createElement('textarea');
+    textarea.innerHTML = html;
+
+    return textarea.value
+      .replace(/↵/g, '');
+  }
+  
   function sanitizeFileName(name) {
     return name
       .replace(/[<>:"/\\|?*\x00-\x1F]/g, '_')
@@ -871,6 +895,7 @@
           ...table.tBodies[0].rows
         ].entries()
       ) {
+        
         const readLines =
           cell => {
             if (!cell) {
@@ -890,19 +915,16 @@
               return items
                 .map(
                   li =>
-                    cleanText(
-                      li.innerText
-                    )
+                    preserveHtmlText(li)
                 )
                 .join('\n');
             }
 
-            return cleanText(
-              cell.innerText.replace(
+            return preserveHtmlText(cell)
+              .replace(
                 /^以文本方式显示\s*/,
                 ''
-              )
-            );
+              );
           };
 
         cases.push({
